@@ -1,0 +1,2478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Office Escape Room</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #eadcf5;
+    color: #33243f;
+}
+
+/* =========================
+   MAIN GAME
+========================= */
+
+.game {
+    min-height: 100vh;
+    position: relative;
+}
+
+/* =========================
+   TOP BAR
+========================= */
+
+.top-bar {
+    height: 70px;
+    background: linear-gradient(90deg, #9c7ac9, #d9b8ec);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+    color: white;
+    box-shadow: 0 3px 10px rgba(0,0,0,.2);
+}
+
+.title {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.progress {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.key-count {
+    background: rgba(255,255,255,.25);
+    padding: 10px 16px;
+    border-radius: 20px;
+}
+
+.music-btn {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    background: white;
+    color: #6c4a88;
+    font-weight: bold;
+}
+
+/* =========================
+   ROOMS
+========================= */
+
+.room {
+    display: none;
+    min-height: calc(100vh - 70px);
+    padding: 35px;
+}
+
+.room.active {
+    display: block;
+}
+
+.room-title {
+    text-align: center;
+    color: #68458c;
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.room-description {
+    text-align: center;
+    max-width: 850px;
+    margin: 0 auto 25px;
+    font-size: 17px;
+}
+
+/* =========================
+   OFFICE ROOM
+========================= */
+
+.office {
+    position: relative;
+    max-width: 1200px;
+    height: 650px;
+    margin: auto;
+
+    background-image:
+        linear-gradient(rgba(244,226,250,.12), rgba(244,226,250,.12)),
+        url("images/office-background.jpg");
+
+    background-size: cover;
+    background-position: center;
+
+    border-radius: 20px;
+    overflow: hidden;
+
+    box-shadow: 0 10px 30px rgba(68,43,90,.3);
+}
+
+/* =========================
+   CLICKABLE OBJECTS
+========================= */
+
+.hotspot {
+    position: absolute;
+    border: 3px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 15px;
+    transition: .25s;
+}
+
+.hotspot:hover {
+    border-color: rgba(255,255,255,.8);
+    background: rgba(255,255,255,.12);
+    box-shadow: 0 0 20px rgba(255,255,255,.5);
+}
+
+.hotspot.found {
+    border-color: #77d79c;
+    background: rgba(119,215,156,.18);
+}
+
+/*
+   IMPORTANT:
+   These positions correspond to the office image.
+   You can change them if your picture has a different layout.
+*/
+
+/* Laptop */
+.laptop {
+    left: 1%;
+    bottom: 7%;
+    width: 22%;
+    height: 22%;
+}
+
+/* Green plant */
+.plant {
+    left: 0%;
+    top: 22%;
+    width: 12%;
+    height: 30%;
+}
+
+/* Desk lamp */
+.lamp {
+    left: 3%;
+    top: 35%;
+    width: 15%;
+    height: 25%;
+}
+
+/* Wall notes */
+.notes {
+    right: 14%;
+    top: 7%;
+    width: 18%;
+    height: 24%;
+}
+
+/* Books */
+.books {
+    left: 38%;
+    top: 39%;
+    width: 16%;
+    height: 25%;
+}
+
+/* Notebook */
+.notebook {
+    right: 6%;
+    bottom: 4%;
+    width: 18%;
+    height: 25%;
+}
+
+/* Clock */
+.clock {
+    right: 22%;
+    top: 0%;
+    width: 13%;
+    height: 18%;
+}
+
+/* Security cabinet */
+.cabinet {
+    right: 0%;
+    top: 25%;
+    width: 20%;
+    height: 50%;
+}
+
+/* Drawer */
+.drawer {
+    right: 5%;
+    top: 48%;
+    width: 14%;
+    height: 10%;
+}
+
+/* =========================
+   OBJECT LABEL
+========================= */
+
+.object-label {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(40,25,50,.8);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 20px;
+    pointer-events: none;
+    opacity: 0;
+    transition: .3s;
+}
+
+.office:hover .object-label {
+    opacity: 1;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    inset: 0;
+    background: rgba(24,15,35,.72);
+
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-box {
+    background: white;
+    width: min(700px, 95%);
+    max-height: 90vh;
+    overflow-y: auto;
+
+    padding: 30px;
+    border-radius: 20px;
+
+    text-align: center;
+
+    box-shadow: 0 20px 60px rgba(0,0,0,.4);
+
+    animation: pop .25s ease;
+}
+
+@keyframes pop {
+    from {
+        transform: scale(.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-box h2 {
+    color: #68458c;
+}
+
+.close-btn {
+    float: right;
+    border: none;
+    background: #eee;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+button {
+    font-family: inherit;
+}
+
+.main-btn {
+    background: linear-gradient(90deg,#8d62b3,#b983d4);
+    color: white;
+    border: none;
+
+    padding: 12px 25px;
+
+    border-radius: 25px;
+
+    cursor: pointer;
+
+    font-size: 16px;
+
+    margin: 8px;
+}
+
+.main-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* =========================
+   ANSWER INPUT
+========================= */
+
+.answer-input {
+    width: 80%;
+    padding: 13px;
+
+    border: 2px solid #d4bee4;
+    border-radius: 10px;
+
+    margin: 12px 0;
+
+    font-size: 16px;
+}
+
+/* =========================
+   QUESTIONS
+========================= */
+
+.question-card {
+    max-width: 850px;
+    margin: 15px auto;
+
+    background: white;
+
+    padding: 20px;
+
+    border-radius: 15px;
+
+    box-shadow: 0 4px 15px rgba(0,0,0,.12);
+}
+
+.question-card label {
+    display: block;
+
+    padding: 10px;
+
+    margin: 5px 0;
+
+    border-radius: 8px;
+
+    background: #f6effa;
+
+    cursor: pointer;
+}
+
+.question-card label:hover {
+    background: #ead8f3;
+}
+
+/* =========================
+   IMAGE PUZZLE
+========================= */
+
+.puzzle-image {
+    display: block;
+
+    max-width: 90%;
+
+    max-height: 400px;
+
+    margin: 20px auto;
+
+    border-radius: 15px;
+
+    box-shadow: 0 5px 20px rgba(0,0,0,.2);
+}
+
+/* =========================
+   MATCHING GAME
+========================= */
+
+.match-container {
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
+
+    gap: 15px;
+
+    max-width: 900px;
+
+    margin: 25px auto;
+}
+
+.match-card {
+    background: white;
+
+    border-radius: 15px;
+
+    padding: 20px;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    border: 3px solid transparent;
+
+    box-shadow: 0 5px 15px rgba(0,0,0,.12);
+}
+
+.match-card.selected {
+    border-color: #a36bc9;
+}
+
+.match-card.correct {
+    border-color: #62c78a;
+    background: #e9faef;
+}
+
+.match-card img {
+    width: 100px;
+    height: 80px;
+
+    object-fit: cover;
+
+    border-radius: 10px;
+}
+
+/* =========================
+   WORD PUZZLE
+========================= */
+
+.word-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2,1fr);
+
+    gap: 15px;
+
+    max-width: 800px;
+
+    margin: 25px auto;
+}
+
+.word-box {
+    background: white;
+
+    padding: 15px;
+
+    border-radius: 12px;
+
+    box-shadow: 0 3px 12px rgba(0,0,0,.1);
+}
+
+/* =========================
+   EMOJI
+========================= */
+
+.emoji {
+    font-size: 55px;
+
+    letter-spacing: 8px;
+
+    margin: 15px;
+}
+
+/* =========================
+   ROOM NAVIGATION
+========================= */
+
+.navigation {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 15px;
+
+    margin-top: 25px;
+}
+
+/* =========================
+   SUCCESS
+========================= */
+
+.success {
+    color: #36a362;
+
+    font-weight: bold;
+
+    font-size: 20px;
+}
+
+.error {
+    color: #c24a5b;
+
+    font-weight: bold;
+}
+
+/* =========================
+   FINAL LOCK
+========================= */
+
+.lock {
+    max-width: 450px;
+
+    margin: 30px auto;
+
+    background: white;
+
+    padding: 35px;
+
+    border-radius: 20px;
+
+    text-align: center;
+
+    box-shadow: 0 8px 25px rgba(0,0,0,.2);
+}
+
+.lock-input {
+    font-size: 28px;
+
+    text-align: center;
+
+    letter-spacing: 8px;
+
+    width: 220px;
+
+    padding: 15px;
+
+    border-radius: 12px;
+
+    border: 3px solid #b78ad2;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:700px) {
+
+    .room {
+        padding: 15px;
+    }
+
+    .office {
+        height: 500px;
+    }
+
+    .word-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .top-bar {
+        height: auto;
+        padding: 15px;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+<!-- =========================
+     TOP BAR
+========================= -->
+
+<div class="top-bar">
+
+    <div class="title">
+        🔐 Office Escape Room
+    </div>
+
+    <div class="progress">
+
+        <div class="key-count">
+            🔑 Keys: <span id="keyCount">0</span>/8
+        </div>
+
+        <button class="music-btn" onclick="toggleMusic()">
+            🎵 Music
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- BACKGROUND MUSIC -->
+
+<audio id="music" loop>
+    <source src="music/background.mp3" type="audio/mpeg">
+</audio>
+
+
+<!-- =====================================================
+     ROOM 1
+===================================================== -->
+
+<section class="room active" id="room1">
+
+<h1 class="room-title">
+    Room 1 – Identifying Values
+</h1>
+
+<p class="room-description">
+    Click the Play button to reveal the picture.
+    Study the picture carefully and enter the answer.
+</p>
+
+<div class="question-card">
+
+    <h2>Picture Challenge</h2>
+
+    <button class="main-btn" onclick="revealRoom1()">
+        ▶ Play
+    </button>
+
+    <div id="room1Picture" style="display:none;">
+
+        <img
+            src="images/room1-values.jpg"
+            class="puzzle-image"
+            alt="Room 1 Picture">
+
+        <p>
+            What workplace value does this picture represent?
+        </p>
+
+        <input
+            id="room1Answer"
+            class="answer-input"
+            placeholder="Enter your answer">
+
+        <br>
+
+        <button class="main-btn" onclick="checkRoom1()">
+            Submit Answer
+        </button>
+
+        <p id="room1Result"></p>
+
+    </div>
+
+</div>
+
+<div class="question-card">
+
+    <h2>Question 2</h2>
+
+    <p>
+        Which value means treating coworkers fairly,
+        honestly, and respectfully?
+    </p>
+
+    <input
+        id="r1q2"
+        class="answer-input"
+        placeholder="Your answer">
+
+    <br>
+
+    <button class="main-btn" onclick="checkR1Q2()">
+        Submit
+    </button>
+
+    <p id="r1q2Result"></p>
+
+</div>
+
+<div class="navigation">
+
+    <button class="main-btn" onclick="goRoom(2)">
+        Room 2 →
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     ROOM 2
+===================================================== -->
+
+<section class="room" id="room2">
+
+<h1 class="room-title">
+    Room 2 – Matching Game
+</h1>
+
+<p class="room-description">
+    Match the picture with the correct scrambled letters.
+    Click a picture first, then click its matching word.
+</p>
+
+<div class="match-container">
+
+    <div class="match-card" data-answer="RESPECT"
+         onclick="selectMatch(this,'RESPECT')">
+
+        <img src="images/teamwork.jpg">
+
+        <p>Workplace Picture</p>
+
+    </div>
+
+
+    <div class="match-card" data-answer="RESPECT"
+         onclick="selectMatch(this,'RESPECT')">
+
+        <h2>TCESPRE</h2>
+
+    </div>
+
+
+    <div class="match-card" data-answer="TEAMWORK"
+         onclick="selectMatch(this,'TEAMWORK')">
+
+        <div class="emoji">🤝</div>
+
+        <p>Team Picture</p>
+
+    </div>
+
+
+    <div class="match-card" data-answer="TEAMWORK"
+         onclick="selectMatch(this,'TEAMWORK')">
+
+        <h2>ROWKTEAM</h2>
+
+    </div>
+
+
+    <div class="match-card" data-answer="HONESTY"
+         onclick="selectMatch(this,'HONESTY')">
+
+        <div class="emoji">📝</div>
+
+        <p>Honesty Picture</p>
+
+    </div>
+
+
+    <div class="match-card" data-answer="HONESTY"
+         onclick="selectMatch(this,'HONESTY')">
+
+        <h2>TYHONES</h2>
+
+    </div>
+
+</div>
+
+<p id="matchResult" style="text-align:center;"></p>
+
+<div class="navigation">
+
+    <button class="main-btn" onclick="goRoom(1)">
+        ← Room 1
+    </button>
+
+    <button class="main-btn" onclick="goRoom(3)">
+        Room 3 →
+    </button>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     ROOM 3
+===================================================== -->
+
+<section class="room" id="room3">
+
+<h1 class="room-title">
+    Room 3 – Word Puzzle
+</h1>
+
+<p class="room-description">
+    Solve all 10 scrambled workplace words.
+</p>
+
+<div class="word-grid">
+
+<div class="word-box">
+1. C E P T R E S → 
+<input class="answer-input wordAnswer" data-answer="RESPECT">
+</div>
+
+<div class="word-box">
+2. K R O W M A E T →
+<input class="answer-input wordAnswer" data-answer="TEAMWORK">
+</div>
+
+<div class="word-box">
+3. Y T S E N H O →
+<input class="answer-input wordAnswer" data-answer="HONESTY">
+</div>
+
+<div class="word-box">
+4. T S U R T →
+<input class="answer-input wordAnswer" data-answer="TRUST">
+</div>
+
+<div class="word-box">
+5. Y T I L I B A S N O P S R E →
+<input class="answer-input wordAnswer" data-answer="RESPONSIBILITY">
+</div>
+
+<div class="word-box">
+6. T Y A L O L →
+<input class="answer-input wordAnswer" data-answer="LOYALTY">
+</div>
+
+<div class="word-box">
+7. E C A R N T I O M M U N →
+<input class="answer-input wordAnswer" data-answer="COMMUNICATION">
+</div>
+
+<div class="word-box">
+8. N C O F I D E N C E →
+<input class="answer-input wordAnswer" data-answer="CONFIDENCE">
+</div>
+
+<div class="word-box">
+9. Y T I V I T C R P O D U →
+<input class="answer-input wordAnswer" data-answer="PRODUCTIVITY">
+</div>
+
+<div class="word-box">
+10. Y T I R G E N T I →
+<input class="answer-input wordAnswer" data-answer="INTEGRITY">
+</div>
+
+</div>
+
+<div style="text-align:center;">
+
+<button class="main-btn" onclick="checkWordPuzzle()">
+    Check Answers
+</button>
+
+</div>
+
+<p id="wordResult" style="text-align:center;"></p>
+
+<div class="navigation">
+
+<button class="main-btn" onclick="goRoom(2)">
+    ← Room 2
+</button>
+
+<button class="main-btn" onclick="goRoom(4)">
+    Room 4 →
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     ROOM 4
+===================================================== -->
+
+<section class="room" id="room4">
+
+<h1 class="room-title">
+    Room 4 – Difficult Emoji Puzzle
+</h1>
+
+<p class="room-description">
+    Decode the workplace phrase represented by the emojis.
+</p>
+
+
+<div class="question-card">
+
+<h2>Challenge 1</h2>
+
+<div class="emoji">
+    👂 + 💬 + 🤝
+</div>
+
+<p>
+What workplace concept does this represent?
+</p>
+
+<input
+id="emoji1"
+class="answer-input"
+placeholder="Your answer">
+
+</div>
+
+
+<div class="question-card">
+
+<h2>Challenge 2</h2>
+
+<div class="emoji">
+    🧠 + 💡 + 👥 + 🎯
+</div>
+
+<p>
+What workplace concept is represented?
+</p>
+
+<input
+id="emoji2"
+class="answer-input"
+placeholder="Your answer">
+
+</div>
+
+
+<div class="question-card">
+
+<h2>Challenge 3</h2>
+
+<div class="emoji">
+    🔒 + 🤝 + ❤️ + 🏢
+</div>
+
+<p>
+What important workplace value is represented?
+</p>
+
+<input
+id="emoji3"
+class="answer-input"
+placeholder="Your answer">
+
+</div>
+
+
+<div style="text-align:center;">
+
+<button class="main-btn" onclick="checkEmoji()">
+    Check Emoji Puzzle
+</button>
+
+</div>
+
+<p id="emojiResult" style="text-align:center;"></p>
+
+<div class="navigation">
+
+<button class="main-btn" onclick="goRoom(3)">
+    ← Room 3
+</button>
+
+<button class="main-btn" onclick="goRoom(5)">
+    Room 5 →
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     ROOM 5
+===================================================== -->
+
+<section class="room" id="room5">
+
+<h1 class="room-title">
+    Room 5 – Logic Challenge
+</h1>
+
+<p class="room-description">
+    Think carefully before selecting your answer.
+</p>
+
+<div class="question-card">
+
+<h2>The Meeting Room</h2>
+
+<p>
+
+Four employees — Anna, Ben, Carla, and David —
+arrived at different times.
+
+Anna arrived before Ben.
+
+Carla arrived after David.
+
+David arrived before Anna.
+
+</p>
+
+<p>
+Who arrived first?
+</p>
+
+<label>
+<input type="radio" name="logic5" value="Anna">
+Anna
+</label>
+
+<label>
+<input type="radio" name="logic5" value="Ben">
+Ben
+</label>
+
+<label>
+<input type="radio" name="logic5" value="Carla">
+Carla
+</label>
+
+<label>
+<input type="radio" name="logic5" value="David">
+David
+</label>
+
+<br>
+
+<button class="main-btn" onclick="checkLogic5()">
+    Submit
+</button>
+
+<p id="logic5Result"></p>
+
+</div>
+
+<div class="navigation">
+
+<button class="main-btn" onclick="goRoom(4)">
+    ← Room 4
+</button>
+
+<button class="main-btn" onclick="goRoom(6)">
+    Room 6 →
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     ROOM 6
+===================================================== -->
+
+<section class="room" id="room6">
+
+<h1 class="room-title">
+    Room 6 – The Shared Office Kitchen
+</h1>
+
+<p class="room-description">
+
+Four coworkers — Amy, Ben, Cole, and Dan —
+each left a lunch box in the office fridge.
+
+The lunch boxes are lined up on a single shelf
+from left to right: Positions 1, 2, 3, and 4.
+
+</p>
+
+
+<div class="question-card">
+
+<h2>The Clues</h2>
+
+<p>
+1. Dan's box is at position 4 (the far right).
+</p>
+
+<p>
+2. Amy's box is directly to the left of Ben's box.
+</p>
+
+<hr>
+
+<h3>
+Who owns the lunch box at position 1?
+</h3>
+
+<label>
+<input type="radio" name="kitchen" value="Amy">
+Amy
+</label>
+
+<label>
+<input type="radio" name="kitchen" value="Ben">
+Ben
+</label>
+
+<label>
+<input type="radio" name="kitchen" value="Cole">
+Cole
+</label>
+
+<label>
+<input type="radio" name="kitchen" value="Dan">
+Dan
+</label>
+
+<br>
+
+<button class="main-btn" onclick="checkKitchen()">
+    Unlock
+</button>
+
+<p id="kitchenResult"></p>
+
+</div>
+
+<div class="navigation">
+
+<button class="main-btn" onclick="goRoom(5)">
+    ← Room 5
+</button>
+
+<button class="main-btn" onclick="goRoom(7)">
+    Room 7 →
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     ROOM 7
+===================================================== -->
+
+<section class="room" id="room7">
+
+<h1 class="room-title">
+    Room 7 – Picture Puzzle
+</h1>
+
+<p class="room-description">
+
+Study the picture you added to the folder.
+Find the hidden clue and answer the question.
+
+</p>
+
+
+<div class="question-card">
+
+<img
+src="images/hidden-office.jpg"
+class="puzzle-image"
+alt="Your Picture Puzzle">
+
+<p>
+What object, symbol, number, or clue is hidden in the picture?
+</p>
+
+<input
+id="pictureAnswer"
+class="answer-input"
+placeholder="Enter the hidden clue">
+
+<br>
+
+<button class="main-btn" onclick="checkPicturePuzzle()">
+    Submit
+</button>
+
+<p id="pictureResult"></p>
+
+</div>
+
+
+<div class="navigation">
+
+<button class="main-btn" onclick="goRoom(6)">
+    ← Room 6
+</button>
+
+<button class="main-btn" onclick="goRoom(8)">
+    Room 8 →
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     ROOM 8
+===================================================== -->
+
+<section class="room" id="room8">
+
+<h1 class="room-title">
+    Room 8 – Workplace Policies
+</h1>
+
+<p class="room-description">
+
+Answer all 10 questions about workplace policies.
+Choose the best answer for each situation.
+
+</p>
+
+
+<form id="policyQuiz">
+
+
+<div class="question-card">
+
+<h3>1. What should you do if you are going to be late for work?</h3>
+
+<label>
+<input type="radio" name="q1" value="A">
+A. Say nothing
+</label>
+
+<label>
+<input type="radio" name="q1" value="B">
+B. Notify your supervisor as soon as possible
+</label>
+
+<label>
+<input type="radio" name="q1" value="C">
+C. Leave without telling anyone
+</label>
+
+</div>
+
+
+<div class="question-card">
+
+<h3>2. What should you do with confidential company information?</h3>
+
+<label>
+<input type="radio" name="q2" value="A">
+A. Share it publicly
+</label>
+
+<label>
+<input type="radio" name="q2" value="B">
+B. Protect it and only share it with authorized people
+</label>
+
+<label>
+<input type="radio" name="q2" value="C">
+C. Post it online
+</label>
+
+</div>
+
+
+<div class="question-card">
+
+<h3>3. What is the best response to workplace harassment?</h3>
+
+<label>
+<input type="radio" name="q3" value="A">
+A. Ignore it
+</label>
+
+<label>
+<input type="radio" name="q3" value="B">
+B. Report it through the appropriate company channel
+</label>
+
+<label>
+<input type="radio" name="q3" value="C">
+C. Encourage it
+</label>
+
+</div>
+
+
+<div class="question-card">
+
+<h3>4. What should you do with your work password?</h3>
+
+<label>
+<input type="radio" name="q4" value="A">
+A. Share it with coworkers
+</label>
+
+<label>
+<input type="radio" name="q4" value="B">
+B. Keep it confidential
+</label>
+
+<label>
+<input type="radio" name="q4" value="C">
+C. Write it on your desk
+</label>
+
+</div>
+
+
+<div class="question-card">
+
+<h3>5. What is appropriate use of company equipment?</h3>
+
+<label>
+<input type="radio" name="q5" value="A">
+A. Follow company guidelines
+</label>
+
+<label>
+<input type="radio" name="q5" value="B">
+B. Use it for anything you want
+</label>
+
+<label>
+<input type="radio" name="q5" value="C">
+C. Give it to anyone outside the company
+</label>
+
+</div>
+
+
+<div class="question-card">
+
+<h3>6. If you make a workplace mistake, what should you do?</h3>
+
+<label>
+<input type="radio" name="q6" value="A">
+A. Hide it
+</label>
+
+<label>
+<input type="radio" name="q6" value="B">
+B. Report it and help correct it
+</label>
+
+<label>
+<input type="radio" name="q6" value="C">
+C. Blame another employee
+</label>
+
+</div>
+
+
+<div class="question-card">
+
+<h3>7. What should employees do during emergency situations?</h3>
+
+<label>
+<input type="radio" name="q7" value="A">
+A. Follow emergency procedures
+</label>
+
+<label>
+<input type="radio" name="q7" value="B">
+B. Ignore instructions
+</label>
+
+<label>
+<input type="radio" name="q7" value="C">
+C. Continue working normally
+</label>
+
+</div>
+
+
+<div class="question-card">
+
+<h3>8. How should employees treat coworkers?</h3>
+
+<label>
+<input type="radio" name="q8" value="A">
+A. With professionalism and respect
+</label>
+
+<label>
+<input type="radio" name="q8" value="B">
+B. With disrespect
+</label>
+
+<label>
+<input type="radio" name="q8" value="C">
+C. With discrimination
+</label>
+
+</div>
+
+
+<div class="question-card">
+
+<h3>9. What should you do if you disagree with a coworker?</h3>
+
+<label>
+<input type="radio" name="q9" value="A">
+A. Argue aggressively
+</label>
+
+<label>
+<input type="radio" name="q9" value="B">
+B. Communicate professionally
+</label>
+
+<label>
+<input type="radio" name="q9" value="C">
+C. Spread rumors
+</label>
+
+</div>
+
+
+<div class="question-card">
+
+<h3>10. Why are workplace policies important?</h3>
+
+<label>
+<input type="radio" name="q10" value="A">
+A. They help create a safe, fair, and professional workplace
+</label>
+
+<label>
+<input type="radio" name="q10" value="B">
+B. They are unnecessary
+</label>
+
+<label>
+<input type="radio" name="q10" value="C">
+C. They only apply to managers
+</label>
+
+</div>
+
+
+<div style="text-align:center">
+
+<button
+type="button"
+class="main-btn"
+onclick="checkPolicies()">
+
+Check All Answers
+
+</button>
+
+</div>
+
+</form>
+
+<p
+id="policyResult"
+style="text-align:center;">
+</p>
+
+
+<div class="navigation">
+
+<button class="main-btn" onclick="goRoom(7)">
+← Room 7
+</button>
+
+<button class="main-btn" onclick="goRoom(9)">
+Room 9 →
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     ROOM 9
+===================================================== -->
+
+<section class="room" id="room9">
+
+<h1 class="room-title">
+    Room 9 – Teamwork Challenge
+</h1>
+
+<p class="room-description">
+    Choose the best response to each workplace situation.
+</p>
+
+
+<div class="question-card">
+
+<h3>
+Your team has a deadline tomorrow, but one coworker
+is struggling with their assigned task. What should you do?
+</h3>
+
+<label>
+<input type="radio" name="team9" value="A">
+A. Ignore them
+</label>
+
+<label>
+<input type="radio" name="team9" value="B">
+B. Offer appropriate help and communicate with the team
+</label>
+
+<label>
+<input type="radio" name="team9" value="C">
+C. Blame them for the delay
+</label>
+
+<br>
+
+<button class="main-btn" onclick="checkRoom9()">
+Submit
+</button>
+
+<p id="room9Result"></p>
+
+</div>
+
+
+<div class="navigation">
+
+<button class="main-btn" onclick="goRoom(8)">
+← Room 8
+</button>
+
+<button class="main-btn" onclick="goRoom(10)">
+Room 10 →
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     ROOM 10
+===================================================== -->
+
+<section class="room" id="room10">
+
+<h1 class="room-title">
+    🔐 Room 10 – Final Security Lock
+</h1>
+
+<p class="room-description">
+
+You have reached the final room.
+
+Collect the keys hidden around the office,
+then enter the final security code.
+
+</p>
+
+
+<div class="lock">
+
+<div style="font-size:70px;">
+🔐
+</div>
+
+<h2>Security Lock</h2>
+
+<p>
+Enter the final code:
+</p>
+
+<input
+id="finalCode"
+class="lock-input"
+maxlength="4"
+placeholder="0000">
+
+<br><br>
+
+<button class="main-btn" onclick="checkFinalCode()">
+Unlock Office
+</button>
+
+<p id="finalResult"></p>
+
+</div>
+
+
+<div class="navigation">
+
+<button class="main-btn" onclick="goRoom(9)">
+← Room 9
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     OBJECT POPUP MODAL
+===================================================== -->
+
+<div class="modal" id="objectModal">
+
+<div class="modal-box">
+
+<button class="close-btn" onclick="closeModal()">
+×
+</button>
+
+<h2 id="modalTitle">
+Hidden Key
+</h2>
+
+<div id="modalContent">
+</div>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   GAME VARIABLES
+===================================================== */
+
+let keys = 0;
+
+let collected = {
+
+    laptop: false,
+    plant: false,
+    lamp: false,
+    notes: false,
+    books: false,
+    notebook: false,
+    clock: false,
+    cabinet: false
+
+};
+
+
+/* =====================================================
+   ROOM NAVIGATION
+===================================================== */
+
+function goRoom(roomNumber) {
+
+    document.querySelectorAll(".room").forEach(room => {
+        room.classList.remove("active");
+    });
+
+    const room = document.getElementById("room" + roomNumber);
+
+    if(room) {
+        room.classList.add("active");
+        window.scrollTo(0,0);
+    }
+
+}
+
+
+/* =====================================================
+   KEY SYSTEM
+===================================================== */
+
+function collectKey(item, title, message) {
+
+    if(collected[item]) {
+
+        showModal(
+            title,
+            "<p>You already found this key.</p>"
+        );
+
+        return;
+    }
+
+    collected[item] = true;
+
+    keys++;
+
+    document.getElementById("keyCount").textContent = keys;
+
+    showModal(
+        title,
+        `
+        <div style="font-size:70px;">🔑</div>
+
+        <p>${message}</p>
+
+        <p class="success">
+        Key collected!
+        </p>
+        `
+    );
+
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function showModal(title, content) {
+
+    document.getElementById("modalTitle").textContent = title;
+
+    document.getElementById("modalContent").innerHTML = content;
+
+    document.getElementById("objectModal").classList.add("show");
+
+}
+
+
+function closeModal() {
+
+    document.getElementById("objectModal").classList.remove("show");
+
+}
+
+
+/* =====================================================
+   OFFICE OBJECTS
+===================================================== */
+
+function clickLaptop() {
+
+    collectKey(
+        "laptop",
+        "Laptop Key",
+        "You clicked the laptop. A hidden compartment opens and a key pops up!"
+    );
+
+}
+
+
+function clickPlant() {
+
+    collectKey(
+        "plant",
+        "Plant Key",
+        "You moved the green plant and discovered a small key hidden behind it."
+    );
+
+}
+
+
+function clickLamp() {
+
+    collectKey(
+        "lamp",
+        "Desk Lamp Key",
+        "You clicked the desk lamp. The base opens and reveals a key."
+    );
+
+}
+
+
+function clickNotes() {
+
+    collectKey(
+        "notes",
+        "Wall Notes Key",
+        "You inspected the wall notes. Behind one of the notes is a hidden key."
+    );
+
+}
+
+
+function clickBooks() {
+
+    collectKey(
+        "books",
+        "Office Books Key",
+        "You checked the office books. A key was hidden between the pages."
+    );
+
+}
+
+
+function clickNotebook() {
+
+    collectKey(
+        "notebook",
+        "Notebook Key",
+        "You opened the notebook and found a key tucked inside."
+    );
+
+}
+
+
+function clickClock() {
+
+    collectKey(
+        "clock",
+        "Clock Key",
+        "You checked behind the office clock and found another key."
+    );
+
+}
+
+
+function clickCabinet() {
+
+    collectKey(
+        "cabinet",
+        "Security Cabinet Key",
+        "The security cabinet opens and reveals a final key!"
+    );
+
+}
+
+
+/* =====================================================
+   ROOM 1
+===================================================== */
+
+function revealRoom1() {
+
+    document.getElementById("room1Picture").style.display = "block";
+
+}
+
+
+function checkRoom1() {
+
+    let answer =
+        document.getElementById("room1Answer")
+        .value
+        .trim()
+        .toLowerCase();
+
+    const correct = [
+        "teamwork",
+        "respect",
+        "honesty",
+        "responsibility",
+        "communication"
+    ];
+
+    if(correct.includes(answer)) {
+
+        document.getElementById("room1Result").innerHTML =
+            "<span class='success'>Correct! Great job.</span>";
+
+    } else {
+
+        document.getElementById("room1Result").innerHTML =
+            "<span class='error'>Try again. Think about workplace values.</span>";
+
+    }
+
+}
+
+
+function checkR1Q2() {
+
+    let answer =
+        document.getElementById("r1q2")
+        .value
+        .trim()
+        .toLowerCase();
+
+    if(answer === "respect") {
+
+        document.getElementById("r1q2Result").innerHTML =
+            "<span class='success'>Correct!</span>";
+
+    } else {
+
+        document.getElementById("r1q2Result").innerHTML =
+            "<span class='error'>Try again.</span>";
+
+    }
+
+}
+
+
+/* =====================================================
+   ROOM 2 MATCHING
+===================================================== */
+
+let selectedMatch = null;
+
+function selectMatch(card, answer) {
+
+    if(card.classList.contains("correct")) {
+        return;
+    }
+
+    if(!selectedMatch) {
+
+        selectedMatch = {
+            card: card,
+            answer: answer
+        };
+
+        card.classList.add("selected");
+
+        return;
+    }
+
+    if(
+        selectedMatch.answer === answer &&
+        selectedMatch.card !== card
+    ) {
+
+        selectedMatch.card.classList.remove("selected");
+        selectedMatch.card.classList.add("correct");
+
+        card.classList.add("correct");
+
+        document.getElementById("matchResult").innerHTML =
+            "<span class='success'>Correct match!</span>";
+
+    } else {
+
+        selectedMatch.card.classList.remove("selected");
+
+        document.getElementById("matchResult").innerHTML =
+            "<span class='error'>That is not a match.</span>";
+
+    }
+
+    selectedMatch = null;
+
+}
+
+
+/* =====================================================
+   ROOM 3 WORD PUZZLE
+===================================================== */
+
+function checkWordPuzzle() {
+
+    let boxes =
+        document.querySelectorAll(".wordAnswer");
+
+    let correct = 0;
+
+    boxes.forEach(box => {
+
+        let answer =
+            box.value
+            .trim()
+            .toUpperCase();
+
+        if(answer === box.dataset.answer) {
+
+            correct++;
+
+            box.style.borderColor = "#62c78a";
+
+        } else {
+
+            box.style.borderColor = "#c24a5b";
+
+        }
+
+    });
+
+
+    if(correct === boxes.length) {
+
+        document.getElementById("wordResult").innerHTML =
+            "<span class='success'>All 10 words are correct!</span>";
+
+    } else {
+
+        document.getElementById("wordResult").innerHTML =
+            `<span class='error'>You got ${correct}/10 correct. Keep trying!</span>`;
+
+    }
+
+}
+
+
+/* =====================================================
+   ROOM 4 EMOJI
+===================================================== */
+
+function checkEmoji() {
+
+    let a =
+        document.getElementById("emoji1")
+        .value
+        .trim()
+        .toLowerCase();
+
+    let b =
+        document.getElementById("emoji2")
+        .value
+        .trim()
+        .toLowerCase();
+
+    let c =
+        document.getElementById("emoji3")
+        .value
+        .trim()
+        .toLowerCase();
+
+
+    const first = [
+        "communication",
+        "team communication"
+    ];
+
+    const second = [
+        "problem solving",
+        "problem-solving",
+        "teamwork"
+    ];
+
+    const third = [
+        "trust",
+        "team trust"
+    ];
+
+
+    if(
+        first.includes(a) &&
+        second.includes(b) &&
+        third.includes(c)
+    ) {
+
+        document.getElementById("emojiResult").innerHTML =
+            "<span class='success'>Excellent! You solved the difficult emoji puzzle.</span>";
+
+    } else {
+
+        document.getElementById("emojiResult").innerHTML =
+            "<span class='error'>Some answers are incorrect. Think carefully about the emojis.</span>";
+
+    }
+
+}
+
+
+/* =====================================================
+   ROOM 5 LOGIC
+===================================================== */
+
+function checkLogic5() {
+
+    let selected =
+        document.querySelector(
+            'input[name="logic5"]:checked'
+        );
+
+    if(!selected) {
+
+        document.getElementById("logic5Result").innerHTML =
+            "<span class='error'>Please choose an answer.</span>";
+
+        return;
+    }
+
+
+    if(selected.value === "David") {
+
+        document.getElementById("logic5Result").innerHTML =
+            "<span class='success'>Correct! David arrived first.</span>";
+
+    } else {
+
+        document.getElementById("logic5Result").innerHTML =
+            "<span class='error'>Incorrect. Look at the order clues carefully.</span>";
+
+    }
+
+}
+
+
+/* =====================================================
+   ROOM 6 KITCHEN LOGIC
+===================================================== */
+
+function checkKitchen() {
+
+    let selected =
+        document.querySelector(
+            'input[name="kitchen"]:checked'
+        );
+
+    if(!selected) {
+
+        document.getElementById("kitchenResult").innerHTML =
+            "<span class='error'>Please select an answer.</span>";
+
+        return;
+    }
+
+
+    if(selected.value === "Cole") {
+
+        document.getElementById("kitchenResult").innerHTML =
+            "<span class='success'>Correct! Cole owns the lunch box at position 1.</span>";
+
+    } else {
+
+        document.getElementById("kitchenResult").innerHTML =
+            "<span class='error'>Incorrect. Try arranging Amy, Ben, Cole, and Dan.</span>";
+
+    }
+
+}
+
+
+/* =====================================================
+   ROOM 7 PICTURE PUZZLE
+===================================================== */
+
+function checkPicturePuzzle() {
+
+    let answer =
+        document.getElementById("pictureAnswer")
+        .value
+        .trim();
+
+    /*
+       CHANGE THIS ANSWER TO WHATEVER
+       YOU HIDE IN YOUR PICTURE.
+    */
+
+    const correctAnswer = "7";
+
+    if(answer.toLowerCase() === correctAnswer.toLowerCase()) {
+
+        document.getElementById("pictureResult").innerHTML =
+            "<span class='success'>Correct! You found the hidden clue.</span>";
+
+    } else {
+
+        document.getElementById("pictureResult").innerHTML =
+            "<span class='error'>Look carefully at the picture again.</span>";
+
+    }
+
+}
+
+
+/* =====================================================
+   ROOM 8 WORK POLICIES
+===================================================== */
+
+function checkPolicies() {
+
+    const answers = {
+
+        q1: "B",
+        q2: "B",
+        q3: "B",
+        q4: "B",
+        q5: "A",
+        q6: "B",
+        q7: "A",
+        q8: "A",
+        q9: "B",
+        q10: "A"
+
+    };
+
+
+    let score = 0;
+
+
+    for(let question in answers) {
+
+        let selected =
+            document.querySelector(
+                `input[name="${question}"]:checked`
+            );
+
+        if(selected && selected.value === answers[question]) {
+
+            score++;
+
+        }
+
+    }
+
+
+    if(score === 10) {
+
+        document.getElementById("policyResult").innerHTML =
+            "<span class='success'>Perfect! 10/10. All workplace policy questions are correct.</span>";
+
+    } else {
+
+        document.getElementById("policyResult").innerHTML =
+            `<span class='error'>You scored ${score}/10. Review the questions and try again.</span>`;
+
+    }
+
+}
+
+
+/* =====================================================
+   ROOM 9
+===================================================== */
+
+function checkRoom9() {
+
+    let selected =
+        document.querySelector(
+            'input[name="team9"]:checked'
+        );
+
+    if(!selected) {
+
+        document.getElementById("room9Result").innerHTML =
+            "<span class='error'>Please select an answer.</span>";
+
+        return;
+
+    }
+
+
+    if(selected.value === "B") {
+
+        document.getElementById("room9Result").innerHTML =
+            "<span class='success'>Correct! Good teamwork means communicating and supporting the team.</span>";
+
+    } else {
+
+        document.getElementById("room9Result").innerHTML =
+            "<span class='error'>Think about communication and teamwork.</span>";
+
+    }
+
+}
+
+
+/* =====================================================
+   FINAL LOCK
+===================================================== */
+
+function checkFinalCode() {
+
+    /*
+       FINAL CODE
+
+       Change this number if you want
+       a different secret code.
+    */
+
+    const finalCode = "8164";
+
+    let entered =
+        document.getElementById("finalCode")
+        .value
+        .trim();
+
+
+    if(keys < 8) {
+
+        document.getElementById("finalResult").innerHTML =
+
+            `<span class='error'>
+            You need to find all 8 hidden keys first.
+            You currently have ${keys}/8.
+            </span>`;
+
+        return;
+
+    }
+
+
+    if(entered === finalCode) {
+
+        document.getElementById("finalResult").innerHTML =
+
+            `
+            <span class='success'>
+            🎉 OFFICE UNLOCKED! 🎉
+            </span>
+
+            <br><br>
+
+            Congratulations!
+
+            You successfully completed
+            the Office Escape Room.
+            `;
+
+    } else {
+
+        document.getElementById("finalResult").innerHTML =
+
+            "<span class='error'>Incorrect security code. Try again.</span>";
+
+    }
+
+}
+
+
+/* =====================================================
+   MUSIC
+===================================================== */
+
+function toggleMusic() {
+
+    const music =
+        document.getElementById("music");
+
+
+    if(music.paused) {
+
+        music.play();
+
+    } else {
+
+        music.pause();
+
+    }
+
+}
+
+
+/* =====================================================
+   CLOSE MODAL WHEN CLICKING OUTSIDE
+===================================================== */
+
+document
+.getElementById("objectModal")
+.addEventListener("click", function(event) {
+
+    if(event.target === this) {
+
+        closeModal();
+
+    }
+
+});
+
+</script>
+
+
+<!-- =====================================================
+     CLICKABLE OFFICE HOTSPOTS
+===================================================== -->
+
+<script>
+
+/*
+   These are added dynamically because the office
+   background itself contains the objects.
+
+   Each invisible area is clickable.
+*/
+
+const officeHTML = `
+
+<div class="office">
+
+    <button
+        class="hotspot laptop"
+        onclick="clickLaptop()"
+        aria-label="Laptop">
+    </button>
+
+    <button
+        class="hotspot plant"
+        onclick="clickPlant()"
+        aria-label="Green Plant">
+    </button>
+
+    <button
+        class="hotspot lamp"
+        onclick="clickLamp()"
+        aria-label="Desk Lamp">
+    </button>
+
+    <button
+        class="hotspot notes"
+        onclick="clickNotes()"
+        aria-label="Wall Notes">
+    </button>
+
+    <button
+        class="hotspot books"
+        onclick="clickBooks()"
+        aria-label="Office Books">
+    </button>
+
+    <button
+        class="hotspot notebook"
+        onclick="clickNotebook()"
+        aria-label="Open Notebook">
+    </button>
+
+    <button
+        class="hotspot clock"
+        onclick="clickClock()"
+        aria-label="Clock">
+    </button>
+
+    <button
+        class="hotspot cabinet"
+        onclick="clickCabinet()"
+        aria-label="Security Cabinet">
+    </button>
+
+    <button
+        class="hotspot drawer"
+        onclick="clickCabinet()"
+        aria-label="Drawer">
+    </button>
+
+</div>
+
+`;
+
+
+/*
+   Create the office at the beginning of Room 10
+   as an interactive hidden-object challenge.
+*/
+
+const room10 =
+    document.getElementById("room10");
+
+const officeArea =
+    document.createElement("div");
+
+officeArea.innerHTML = `
+
+<h2 style="text-align:center;color:#68458c;">
+Find the Hidden Keys
+</h2>
+
+<p style="text-align:center;">
+Click individual objects in the office to discover hidden keys.
+There are no numbers to guide you.
+</p>
+
+${officeHTML}
+
+`;
+
+room10.insertBefore(
+    officeArea,
+    room10.querySelector(".lock")
+);
+
+</script>
+
+</body>
+</html>

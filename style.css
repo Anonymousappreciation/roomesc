@@ -1,0 +1,1356 @@
+/* =========================================================
+   OFFICE ESCAPE
+   COMPLETE STYLESHEET
+========================================================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  background:
+    radial-gradient(
+      circle at top,
+      #312e81,
+      #111827 45%,
+      #020617 100%
+    );
+
+  color: #f8fafc;
+
+  min-height: 100vh;
+
+  padding: 15px;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: flex-start;
+}
+
+
+/* =========================================================
+   MAIN GAME CONTAINER
+========================================================= */
+
+.game-container {
+  width: 100%;
+
+  max-width: 1400px;
+
+  background: #111827;
+
+  border: 1px solid #334155;
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.65);
+}
+
+
+/* =========================================================
+   HUD
+========================================================= */
+
+.hud-bar {
+  min-height: 65px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 12px 20px;
+
+  background: #0f172a;
+
+  border-bottom: 1px solid #334155;
+}
+
+
+.hud-brand {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  font-weight: 900;
+
+  letter-spacing: 1px;
+}
+
+
+.lock-icon {
+  font-size: 1.5rem;
+}
+
+
+.game-title {
+  font-size: 1.1rem;
+
+  color: #f8fafc;
+}
+
+
+.hud-center {
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+}
+
+
+.team-badge {
+  padding: 5px 13px;
+
+  border-radius: 999px;
+
+  background: #1e3a8a;
+
+  border: 1px solid #3b82f6;
+
+  color: #bfdbfe;
+
+  font-size: 0.75rem;
+
+  font-weight: 900;
+
+  text-transform: uppercase;
+}
+
+
+.timer-display {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 6px 13px;
+
+  border-radius: 9px;
+
+  background: #292211;
+
+  border: 1px solid #a16207;
+
+  color: #fde047;
+
+  font-family: monospace;
+
+  font-weight: 900;
+
+  font-size: 1rem;
+}
+
+
+.hud-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+}
+
+
+.score-display {
+  font-family: monospace;
+
+  font-size: 0.9rem;
+
+  font-weight: 800;
+
+  color: #6ee7b7;
+}
+
+
+#score-text {
+  color: #34d399;
+
+  margin-left: 5px;
+
+  font-size: 1.1rem;
+}
+
+
+.icon-btn {
+  width: 38px;
+
+  height: 38px;
+
+  border-radius: 10px;
+
+  border: 1px solid #475569;
+
+  background: #1e293b;
+
+  color: white;
+
+  cursor: pointer;
+
+  font-size: 1rem;
+}
+
+
+.icon-btn:hover {
+  background: #334155;
+
+  transform: scale(1.05);
+}
+
+
+/* =========================================================
+   MAIN VIEW
+========================================================= */
+
+.main-view {
+  padding: 16px;
+}
+
+
+/* =========================================================
+   ROOM
+========================================================= */
+
+.room-scene-container {
+  position: relative;
+
+  width: 100%;
+
+  aspect-ratio: 16 / 9;
+
+  min-height: 500px;
+
+  overflow: hidden;
+
+  border-radius: 16px;
+
+  background: #0f172a;
+
+  box-shadow:
+    inset 0 0 50px rgba(0, 0, 0, 0.6);
+}
+
+
+.room-bg-img {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+
+  height: 100%;
+
+  object-fit: cover;
+
+  pointer-events: none;
+
+  user-select: none;
+}
+
+
+/* =========================================================
+   DARK GRADIENT OVER IMAGE
+========================================================= */
+
+.room-scene-container::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.25),
+      transparent 25%,
+      transparent 75%,
+      rgba(0, 0, 0, 0.25)
+    );
+
+  z-index: 2;
+}
+
+
+/* =========================================================
+   TOP SCENE BAR
+========================================================= */
+
+.scene-top-bar {
+  position: absolute;
+
+  top: 0;
+
+  left: 0;
+
+  right: 0;
+
+  z-index: 50;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-start;
+
+  padding: 12px 15px;
+
+  pointer-events: none;
+}
+
+
+.scene-top-bar > * {
+  pointer-events: auto;
+}
+
+
+/* =========================================================
+   TEAM AVATAR
+========================================================= */
+
+.team-avatar-badge {
+  cursor: pointer;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+}
+
+
+.avatar-circle {
+  width: 55px;
+
+  height: 55px;
+
+  border-radius: 50%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: rgba(15, 23, 42, 0.85);
+
+  border: 3px solid #f59e0b;
+
+  box-shadow:
+    0 0 20px rgba(245, 158, 11, 0.6);
+
+  font-size: 1.7rem;
+}
+
+
+.avatar-title {
+  margin-top: 4px;
+
+  color: #fef08a;
+
+  font-weight: 900;
+
+  font-size: 0.75rem;
+
+  text-shadow:
+    0 2px 4px black;
+}
+
+
+/* =========================================================
+   PADLOCK RACK
+========================================================= */
+
+.padlocks-rack {
+  display: flex;
+
+  align-items: center;
+
+  gap: 4px;
+
+  padding: 6px 10px;
+
+  background: rgba(0, 0, 0, 0.78);
+
+  backdrop-filter: blur(8px);
+
+  border: 1px solid #475569;
+
+  border-radius: 15px;
+}
+
+
+.padlock-node {
+  position: relative;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 42px;
+
+  height: 64px;
+
+  padding: 3px;
+
+  background: transparent;
+
+  border: none;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+
+.padlock-node:hover {
+  transform: scale(1.12);
+
+  background: rgba(255, 255, 255, 0.1);
+}
+
+
+.padlock-node.ready {
+  animation: padlockPulse 1s infinite;
+
+  background: rgba(245, 158, 11, 0.2);
+}
+
+
+.padlock-node.unlocked {
+  background: rgba(16, 185, 129, 0.15);
+}
+
+
+.padlock-icon-svg {
+  width: 30px;
+
+  height: 38px;
+}
+
+
+.padlock-label {
+  font-family: monospace;
+
+  color: #cbd5e1;
+
+  font-size: 0.65rem;
+
+  font-weight: 900;
+}
+
+
+.padlock-label.unlocked {
+  color: #34d399;
+}
+
+
+.ready-tag {
+  position: absolute;
+
+  top: -23px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  white-space: nowrap;
+
+  padding: 3px 6px;
+
+  border-radius: 5px;
+
+  background: #f59e0b;
+
+  color: #111827;
+
+  font-size: 0.55rem;
+
+  font-weight: 900;
+}
+
+
+/* =========================================================
+   MASTER KEY
+========================================================= */
+
+.master-key-cta {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 7px;
+
+  border: 1px solid rgba(250, 204, 21, 0.5);
+
+  border-radius: 12px;
+
+  background: rgba(0, 0, 0, 0.6);
+
+  cursor: pointer;
+
+  color: white;
+
+  transition: 0.2s;
+}
+
+
+.master-key-cta:hover {
+  transform: scale(1.05);
+
+  background: rgba(120, 80, 0, 0.55);
+}
+
+
+.master-key-text {
+  max-width: 150px;
+
+  text-align: right;
+
+  color: #fde047;
+
+  font-size: 0.7rem;
+
+  font-weight: 900;
+
+  line-height: 1.3;
+}
+
+
+.master-key-icon {
+  font-size: 2.2rem;
+
+  filter:
+    drop-shadow(0 0 12px #facc15);
+}
+
+
+/* =========================================================
+   CLICKABLE OBJECTS
+========================================================= */
+
+.room-hotspot {
+  position: absolute;
+
+  z-index: 20;
+
+  cursor: pointer;
+
+  border-radius: 12px;
+
+  transition: 0.2s;
+
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: flex-start;
+}
+
+
+.challenge-hotspot {
+  border: 2px solid rgba(245, 158, 11, 0.35);
+}
+
+
+.challenge-hotspot:hover {
+  background: rgba(245, 158, 11, 0.18);
+
+  border-color: #f59e0b;
+
+  box-shadow:
+    0 0 25px rgba(245, 158, 11, 0.8);
+}
+
+
+.decorative-hotspot {
+  z-index: 15;
+
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+}
+
+
+.decorative-hotspot:hover {
+  background: rgba(255, 255, 255, 0.12);
+
+  border-color: white;
+
+  box-shadow:
+    0 0 18px rgba(255, 255, 255, 0.4);
+}
+
+
+/* =========================================================
+   OBJECT NUMBER
+========================================================= */
+
+.hotspot-number {
+  width: 26px;
+
+  height: 26px;
+
+  margin: 4px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: rgba(0, 0, 0, 0.82);
+
+  border: 2px solid #f59e0b;
+
+  color: #fef3c7;
+
+  font-size: 0.7rem;
+
+  font-weight: 900;
+
+  box-shadow:
+    0 0 10px rgba(245, 158, 11, 0.7);
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   TOOLTIP
+========================================================= */
+
+.hotspot-tooltip {
+  position: absolute;
+
+  top: -36px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: max-content;
+
+  max-width: 240px;
+
+  padding: 6px 9px;
+
+  border-radius: 7px;
+
+  background: rgba(0, 0, 0, 0.92);
+
+  border: 1px solid #64748b;
+
+  color: white;
+
+  font-size: 0.68rem;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition: 0.2s;
+
+  z-index: 100;
+}
+
+
+.room-hotspot:hover .hotspot-tooltip {
+  opacity: 1;
+}
+
+
+/* =========================================================
+   BOTTOM TEAM SWITCHER
+========================================================= */
+
+.scene-bottom-left {
+  position: absolute;
+
+  bottom: 14px;
+
+  left: 14px;
+
+  z-index: 50;
+
+  display: flex;
+
+  gap: 5px;
+
+  padding: 6px;
+
+  border-radius: 12px;
+
+  background: rgba(0, 0, 0, 0.78);
+
+  backdrop-filter: blur(7px);
+
+  border: 1px solid #475569;
+}
+
+
+.team-pill-btn {
+  padding: 6px 10px;
+
+  border-radius: 8px;
+
+  border: 1px solid transparent;
+
+  background: transparent;
+
+  color: #cbd5e1;
+
+  cursor: pointer;
+
+  font-weight: 800;
+
+  font-size: 0.7rem;
+}
+
+
+.team-pill-btn:hover {
+  background: #334155;
+}
+
+
+.team-pill-btn.active {
+  background: #1e3a8a;
+
+  border-color: #3b82f6;
+
+  color: #bfdbfe;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast-banner {
+  position: fixed;
+
+  top: 80px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  z-index: 9999;
+
+  max-width: 90%;
+
+  padding: 12px 20px;
+
+  border-radius: 12px;
+
+  font-size: 0.85rem;
+
+  font-weight: 800;
+
+  box-shadow:
+    0 10px 35px rgba(0, 0, 0, 0.5);
+
+  animation: toastIn 0.3s ease;
+}
+
+
+.toast-banner.success {
+  background: #064e3b;
+
+  border: 1px solid #10b981;
+
+  color: #a7f3d0;
+}
+
+
+.toast-banner.warn {
+  background: #78350f;
+
+  border: 1px solid #f59e0b;
+
+  color: #fde68a;
+}
+
+
+.toast-banner.info {
+  background: #1e3a8a;
+
+  border: 1px solid #3b82f6;
+
+  color: #dbeafe;
+}
+
+
+.toast-banner.hidden {
+  display: none;
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.challenge-modal-backdrop {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 500;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  padding: 15px;
+
+  background: rgba(2, 6, 23, 0.86);
+
+  backdrop-filter: blur(7px);
+}
+
+
+.challenge-modal-box {
+  width: 100%;
+
+  max-width: 760px;
+
+  max-height: 90vh;
+
+  overflow-y: auto;
+
+  padding: 24px;
+
+  border-radius: 20px;
+
+  background: #111827;
+
+  border: 1px solid #475569;
+
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.8);
+}
+
+
+.modal-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding-bottom: 15px;
+
+  margin-bottom: 15px;
+
+  border-bottom: 1px solid #334155;
+}
+
+
+.modal-room-number {
+  color: #f59e0b;
+
+  font-family: monospace;
+
+  font-size: 0.75rem;
+
+  font-weight: 900;
+}
+
+
+.modal-title {
+  margin-top: 5px;
+
+  color: white;
+
+  font-size: 1.2rem;
+
+  font-weight: 900;
+}
+
+
+.modal-close-btn {
+  width: 35px;
+
+  height: 35px;
+
+  border: none;
+
+  border-radius: 9px;
+
+  background: #334155;
+
+  color: white;
+
+  cursor: pointer;
+
+  font-size: 1rem;
+}
+
+
+.modal-close-btn:hover {
+  background: #475569;
+}
+
+
+/* =========================================================
+   SCENARIO
+========================================================= */
+
+.scenario-box {
+  padding: 16px;
+
+  margin-bottom: 18px;
+
+  border-radius: 12px;
+
+  background: #0f172a;
+
+  border: 1px solid #334155;
+}
+
+
+.scenario-title {
+  margin-bottom: 7px;
+
+  color: #f59e0b;
+
+  font-size: 0.8rem;
+
+  font-weight: 900;
+}
+
+
+.scenario-text {
+  color: #cbd5e1;
+
+  font-size: 0.88rem;
+
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   SOLVED BANNER
+========================================================= */
+
+.solved-alert-banner {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 12px;
+
+  padding: 14px;
+
+  margin-bottom: 18px;
+
+  border-radius: 12px;
+
+  background: #064e3b;
+
+  border: 2px solid #10b981;
+}
+
+
+.solved-banner-text {
+  color: #a7f3d0;
+
+  font-size: 0.85rem;
+
+  font-weight: 900;
+}
+
+
+/* =========================================================
+   QUESTION
+========================================================= */
+
+.question-text {
+  margin-bottom: 12px;
+
+  font-size: 0.95rem;
+
+  font-weight: 900;
+
+  color: white;
+}
+
+
+.choice-btn {
+  display: block;
+
+  width: 100%;
+
+  padding: 13px 15px;
+
+  margin-bottom: 9px;
+
+  border-radius: 10px;
+
+  border: 1px solid #334155;
+
+  background: #0f172a;
+
+  color: #f8fafc;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  font-size: 0.85rem;
+
+  transition: 0.2s;
+}
+
+
+.choice-btn:hover {
+  background: #1e293b;
+
+  border-color: #64748b;
+
+  transform: translateX(3px);
+}
+
+
+.choice-btn.correct {
+  background: #064e3b;
+
+  border-color: #10b981;
+
+  color: #a7f3d0;
+}
+
+
+.return-room-btn {
+  padding: 11px 16px;
+
+  border-radius: 9px;
+
+  border: none;
+
+  background: #10b981;
+
+  color: #022c22;
+
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+
+.return-room-btn:hover {
+  background: #34d399;
+}
+
+
+/* =========================================================
+   VICTORY
+========================================================= */
+
+.victory-screen {
+  min-height: 600px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 30px;
+}
+
+
+.victory-box {
+  width: 100%;
+
+  max-width: 700px;
+
+  padding: 40px 25px;
+
+  text-align: center;
+
+  border-radius: 25px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #1e293b,
+      #0f172a
+    );
+
+  border: 2px solid #f59e0b;
+
+  box-shadow:
+    0 0 50px rgba(245, 158, 11, 0.25);
+}
+
+
+.victory-icon {
+  font-size: 4rem;
+
+  margin-bottom: 15px;
+}
+
+
+.victory-title {
+  margin-bottom: 10px;
+
+  font-size: 2.2rem;
+
+  font-weight: 1000;
+
+  color: #fef3c7;
+}
+
+
+.victory-subtitle {
+  margin-bottom: 25px;
+
+  color: #cbd5e1;
+
+  line-height: 1.6;
+}
+
+
+.stats-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 10px;
+
+  margin-bottom: 25px;
+}
+
+
+.stat-box {
+  padding: 15px;
+
+  border-radius: 12px;
+
+  background: #020617;
+
+  border: 1px solid #334155;
+}
+
+
+.stat-label {
+  color: #94a3b8;
+
+  font-size: 0.7rem;
+
+  font-weight: 800;
+}
+
+
+.stat-value {
+  margin-top: 5px;
+
+  font-size: 1.4rem;
+
+  font-weight: 1000;
+
+  color: #fbbf24;
+}
+
+
+.play-again-btn {
+  padding: 14px 30px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background: #f59e0b;
+
+  color: #111827;
+
+  font-weight: 1000;
+
+  font-size: 1rem;
+
+  cursor: pointer;
+}
+
+
+.play-again-btn:hover {
+  background: #fbbf24;
+
+  transform: scale(1.04);
+}
+
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes padlockPulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+
+@keyframes toastIn {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translate(-50%, -15px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translate(-50%, 0);
+  }
+}
+
+
+@keyframes victoryGlow {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
+
+  body {
+    padding: 5px;
+  }
+
+  .hud-bar {
+    flex-wrap: wrap;
+
+    justify-content: center;
+  }
+
+  .hud-brand {
+    width: 100%;
+
+    justify-content: center;
+  }
+
+  .hud-center {
+    order: 2;
+  }
+
+  .hud-actions {
+    order: 3;
+  }
+
+  .room-scene-container {
+    min-height: 0;
+
+    aspect-ratio: 16 / 9;
+  }
+
+  .scene-top-bar {
+    padding: 6px;
+  }
+
+  .avatar-circle {
+    width: 42px;
+
+    height: 42px;
+  }
+
+  .padlocks-rack {
+    gap: 0;
+
+    padding: 3px 5px;
+  }
+
+  .padlock-node {
+    width: 30px;
+
+    height: 47px;
+  }
+
+  .padlock-icon-svg {
+    width: 23px;
+
+    height: 29px;
+  }
+
+  .master-key-text {
+    display: none;
+  }
+
+  .master-key-icon {
+    font-size: 1.7rem;
+  }
+
+  .hotspot-tooltip {
+    font-size: 0.55rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .victory-title {
+    font-size: 1.7rem;
+  }
+}
